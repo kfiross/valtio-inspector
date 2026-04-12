@@ -1,6 +1,6 @@
 {
   "name": "@kfiross44/valtio-inspector",
-  "version": "0.9.2",
+  "version": "0.9.4",
   "description": "A dev-only Valtio state inspector with WebSocket live updates",
   "main": "dist/server/index.js",
   "bin": {

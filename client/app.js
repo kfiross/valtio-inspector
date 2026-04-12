@@ -84,7 +84,9 @@ function storeColor(name) {
 
 function renderSidebar() {
   const list = document.getElementById('store-list')
-  const stores = Object.keys(stateTree)
+  // Sort stores alphabetically
+  const stores = Object.keys(stateTree).sort((a, b) => a.localeCompare(b))
+  
 
   if (stores.length === 0) {
     list.innerHTML = ''
@@ -209,7 +211,11 @@ function buildNode(parent, value, key, path, depth) {
     if (!collapsed) {
       const kids = document.createElement('div')
       kids.className = 'json-children'
-      for (const [k2, v2] of Object.entries(value)) {
+      // Sort the keys alphabetically before mapping to buildNode
+      const keys = Object.keys(value).sort((a, b) => a.localeCompare(b))
+      
+      for (const k2 of keys) {
+        const v2 = value[k2]
         buildNode(kids, v2, k2, `${path}.${k2}`, depth + 1)
       }
       parent.appendChild(kids)
