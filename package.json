@@ -1,14 +1,15 @@
 {
   "name": "@kfiross44/valtio-inspector",
-  "version": "1.0.0",
+  "version": "0.9.1",
   "description": "A dev-only Valtio state inspector with WebSocket live updates",
   "main": "dist/server/index.js",
   "bin": {
     "valtio-inspector": "dist/cli.js"
   },
   "scripts": {
-    "dev": "ts-node server/index.ts",
+    "dev": "ts-node src/cli.ts",
     "build": "tsc",
+    "release": "bun run build && changeset publish --access public",
     "start": "node dist/server/index.js"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "valtio": "^2.0.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.30.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
     "@types/node": "^20.19.39",

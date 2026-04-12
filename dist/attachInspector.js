@@ -2,21 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.attachInspector = attachInspector;
 const valtio_1 = require("valtio");
-/**
- * Attach a Valtio proxy store to the inspector.
- *
- * Usage:
- *   attachInspector(myStore, { name: 'auth' })
- *
- * ⚠️  Wrap in process.env.NODE_ENV !== 'production' to exclude from builds.
- */
 function attachInspector(state, options) {
     if (typeof window === 'undefined' && typeof process !== 'undefined') {
         // Node.js / SSR — skip silently
         return () => { };
     }
     const { name, debounce = 100, inspectorUrl = 'http://localhost:7777' } = options;
-    const wsUrl = inspectorUrl.replace('http', 'ws');
+    const wsUrl = inspectorUrl.startsWith('https')
+        ? inspectorUrl.replace('https', 'wss')
+        : inspectorUrl.replace('http', 'ws');
     let timeout = null;
     let ws = null;
     let reconnectAttempts = 0;

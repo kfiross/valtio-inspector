@@ -17,8 +17,10 @@ type AttachOptions = {
  *
  * ⚠️  Wrap in process.env.NODE_ENV !== 'production' to exclude from builds.
  */
-export function attachInspector(
-  state: object,
+import type { Snapshot } from 'valtio'
+
+export function attachInspector<T extends object>(
+  state: T,
   options: AttachOptions
 ): () => void {
   if (typeof window === 'undefined' && typeof process !== 'undefined') {
@@ -32,7 +34,9 @@ export function attachInspector(
     inspectorUrl = 'http://localhost:7777'
   } = options
 
-  const wsUrl = inspectorUrl.replace('http', 'ws')
+  const wsUrl = inspectorUrl.startsWith('https')
+    ? inspectorUrl.replace('https', 'wss')
+    : inspectorUrl.replace('http', 'ws')
 
   let timeout: ReturnType<typeof setTimeout> | null = null
   let ws: WebSocket | null = null
