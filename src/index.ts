@@ -1,0 +1,1 @@
+export { attachInspector } from './attachInspector'

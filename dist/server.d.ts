@@ -1,2 +1,2 @@
 export declare function startServer(port?: number): void;
-//# sourceMappingURL=index.d.ts.map
+//# sourceMappingURL=server.d.ts.map

@@ -126,4 +126,4 @@ export function startServer(port: number = 7777) {
   })
 }
 
-startServer()
+// startServer()

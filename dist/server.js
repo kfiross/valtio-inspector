@@ -103,4 +103,5 @@ function startServer(port = 7777) {
         console.log('\x1b[90m%s\x1b[0m', `     WebSocket ready on ws://localhost:${port}`);
     });
 }
-//# sourceMappingURL=index.js.map
+// startServer()
+//# sourceMappingURL=server.js.map
