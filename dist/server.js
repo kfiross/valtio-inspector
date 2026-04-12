@@ -14,7 +14,7 @@ function startServer(port = 7777) {
     app.use((0, cors_1.default)({
         origin: 'http://localhost:5173'
     }));
-    app.use(express_1.default.json());
+    app.use(express_1.default.json({ limit: '5mb' }));
     const server = http_1.default.createServer(app);
     const wss = new ws_1.WebSocketServer({ server });
     let stateTree = {};

@@ -11,7 +11,7 @@ export function startServer(port: number = 7777) {
     origin: 'http://localhost:5173'
   }))
 
-  app.use(express.json())
+  app.use(express.json({ limit: '5mb' }))
 
   const server = http.createServer(app)
   const wss = new WebSocketServer({ server })
