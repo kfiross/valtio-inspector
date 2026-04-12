@@ -6,6 +6,7 @@ let selectedHistoryId = null
 let activeTab = 'tree'
 let collapsedPaths = new Set()
 let lastDiff = {}
+let allExpanded = true
 
 /* ── WebSocket ── */
 const wsUrl = `ws://${location.host}`
@@ -67,6 +68,47 @@ function setStatus(connected) {
   text.textContent = connected ? 'connected' : 'disconnected'
 }
 
+function collapseAll() {
+  function addCollapsedChildren(obj, basePath) {
+    if (!obj || typeof obj !== 'object') return
+
+    for (const key of Object.keys(obj)) {
+      const path = `${basePath}.${key}`
+      collapsedPaths.add(path)
+
+      addCollapsedChildren(obj[key], path)
+    }
+  }
+
+  collapsedPaths = new Set()
+
+  for (const key of Object.keys(stateTree)) {
+    const rootValue = stateTree[key]
+    addCollapsedChildren(rootValue, key)
+  }
+
+  renderMain()
+}
+
+function expandAll() {
+  collapsedPaths = new Set()
+  renderMain()
+}
+
+function getAllPaths(obj, base = '') {
+  const paths = []
+
+  if (obj && typeof obj === 'object') {
+    for (const key of Object.keys(obj)) {
+      const path = base ? `${base}.${key}` : key
+      paths.push(path)
+      paths.push(...getAllPaths(obj[key], path))
+    }
+  }
+
+  return paths
+}
+
 /* ── Render all ── */
 function renderAll() {
   renderSidebar()
@@ -86,7 +128,7 @@ function renderSidebar() {
   const list = document.getElementById('store-list')
   // Sort stores alphabetically
   const stores = Object.keys(stateTree).sort((a, b) => a.localeCompare(b))
-  
+
 
   if (stores.length === 0) {
     list.innerHTML = ''
@@ -213,7 +255,7 @@ function buildNode(parent, value, key, path, depth) {
       kids.className = 'json-children'
       // Sort the keys alphabetically before mapping to buildNode
       const keys = Object.keys(value).sort((a, b) => a.localeCompare(b))
-      
+
       for (const k2 of keys) {
         const v2 = value[k2]
         buildNode(kids, v2, k2, `${path}.${k2}`, depth + 1)
@@ -325,10 +367,12 @@ document.querySelectorAll('.tab').forEach(tab => {
   })
 })
 
-/* ── Clear ── */
+/* ── Buttons ── */
 document.getElementById('btn-clear').addEventListener('click', () => {
-  fetch('/state', { method: 'DELETE' }).catch(() => {})
+  fetch('/state', { method: 'DELETE' }).catch(() => { })
 })
+document.getElementById('btn-collapse').onclick = collapseAll
+document.getElementById('btn-expand').onclick = expandAll
 
 /* ── Boot ── */
 connect()
