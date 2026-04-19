@@ -83,11 +83,10 @@ The server exposes these endpoints (used internally by the UI):
 
 ---
 
-## Building for production (server)
+## Run the server
 
 ```bash
-npm run build
-npm start
+npx @kfiross44/valtio-inspector
 ```
 
 ---
