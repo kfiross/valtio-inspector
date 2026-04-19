@@ -324,14 +324,30 @@ function renderDiffView(container, diff) {
 function renderHistory() {
   const list = document.getElementById('history-list')
   const count = document.getElementById('history-count')
-  count.textContent = historyLog.length
+  count.textContent = "-"
 
   if (historyLog.length === 0) {
     list.innerHTML = '<div style="padding:12px 14px;color:var(--text-dim);font-size:11px">No history yet</div>'
     return
   }
 
-  list.innerHTML = [...historyLog].reverse().map(entry => {
+  if(!selectedStore){
+    list.innerHTML = '<div style="padding:12px 14px;color:var(--text-dim);font-size:11px">Select a store to view its history</div>'
+    return
+  }
+
+  // Filter to selected store if one is active
+  const filtered = [...historyLog].filter(h => h.store === selectedStore)
+
+  count.textContent = filtered.length
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="padding:12px 14px;color:var(--text-dim);font-size:11px">No history for this store</div>'
+    return
+  }
+
+
+  list.innerHTML = filtered.reverse().map(entry => {
     const active = entry.id === selectedHistoryId ? ' active' : ''
     const time = new Date(entry.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 2 })
     const pills = entry.diff ? Object.entries(entry.diff).slice(0, 4).map(([k]) =>
@@ -346,14 +362,29 @@ function renderHistory() {
   }).join('')
 }
 
-function selectHistory(id) {
+async function selectHistory(id) {
+
   if (selectedHistoryId === id) {
     selectedHistoryId = null
-  } else {
-    selectedHistoryId = id
-    const entry = historyLog.find(h => h.id === id)
-    if (entry) selectedStore = entry.store
+    renderAll()
+    return
   }
+
+  selectedHistoryId = id
+  const entry = historyLog.find(h => h.id === id)
+  if (entry) selectedStore = entry.store
+
+  try {
+    const res = await fetch(`/history/${id}`)
+    if (res.ok) {
+      const full = await res.json()
+      const local = historyLog.find(h => h.id === id)
+      if (local) local.state = full.state
+    }
+  } catch (e) {
+    console.error('Failed to fetch history entry', e)
+  }
+
   renderAll()
 }
 
