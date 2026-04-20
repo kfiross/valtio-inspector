@@ -16,25 +16,29 @@ A dev-only state inspector for [Valtio](https://github.com/pmndrs/valtio) with l
 
 ## Setup
 
-### 1. Install & run the inspector server
+### 1. Install 
 
 ```bash
-cd valtio-inspector
-npm install
-npm run dev
-# → http://localhost:7777
+npm i @kfiross44/valtio-inspector --save-dev
+```
+```bash
+yarn add @kfiross44/valtio-inspector -D
+```
+```bash
+pnpm install @kfiross44/valtio-inspector -D
 ```
 
-### 2. Instrument your stores
 
-Copy `instrument/attachInspector.ts` into your app (requires `valtio` installed).
+
+### 2. Instrument your stores
+requires `valtio` installed
 
 ```ts
 import { proxy } from 'valtio'
-import { attachInspector } from './attachInspector'
+import { ValtioInspector } from '@kfiross44/valtio-inspector';
 
 export const authStore = proxy({
-  user: { id: 1, name: 'kfir' },
+  user: { id: 1, name: 'John' },
   isLoggedIn: false
 })
 
@@ -66,7 +70,11 @@ attachInspector(store, {
   inspectorUrl: 'http://localhost:7777'  // optional — if running elsewhere
 })
 ```
-
+### 3. Run the inspector 
+```bash
+npx @kfiross44/valtio-inspector
+# → http://localhost:7777
+```
 ---
 
 ## API
@@ -81,18 +89,9 @@ The server exposes these endpoints (used internally by the UI):
 | `GET`  | `/history` | Get full history log |
 | `GET`  | `/history/:id` | Get a specific history snapshot |
 
----
-
-## Run the server
-
-```bash
-npx @kfiross44/valtio-inspector
-```
-
----
 
 ## ⚠️ Security
 
 - **Never expose port 7777 publicly.** This is a dev-only tool.
 - Always gate `attachInspector` behind `process.env.NODE_ENV !== 'production'`.
-- Do not run the inspector server in production builds.
+- Do not run the inspector server in production builds!
